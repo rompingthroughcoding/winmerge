@@ -258,6 +258,7 @@ void Init(COptionsMgr *pOptions)
 	pOptions->InitOption(OPT_PATCHCREATOR_COPY_TO_CLIPBOARD, false);
 
 	pOptions->InitOption(OPT_TABBAR_ON_TITLEBAR, true);
+	pOptions->InitOption(OPT_GIT_BASE_FOLDER, _T(""));
 	pOptions->InitOption(OPT_TABBAR_AUTO_MAXWIDTH, true);
 	pOptions->InitOption(OPT_ACTIVE_FRAME_MAX, true);
 	pOptions->InitOption(OPT_ACTIVE_PANE, 0, 0, 2);

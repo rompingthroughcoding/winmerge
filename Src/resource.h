@@ -109,6 +109,8 @@
 #define IDD_DARK_FONT_DIALOG            289
 #define IDD_COMPARISON_RESULT_FILTER    290
 #define IDD_FILTERS_MATCHINSIDE         291
+#define IDD_GIT_COMPARE                 293
+#define IDD_GIT_BAR                     294
 #define IDI_ROTATE2                     302
 #define IDR_LOGO                        307
 #define IDR_MARGIN_ICONS_PNG            310
@@ -331,6 +333,14 @@
 #define IDC_WMGOTO_TODIFF               1117
 #define IDC_WMGOTO_PARAM                1118
 #define IDC_WMGOTO_RANGE                1119
+#define IDC_GITCMP_FILE                 1696
+#define IDC_GITCMP_BROWSE               1697
+#define IDC_GITCMP_VERSION              1698
+#define IDC_GITCMP_STATUS               1699
+#define IDC_GITBAR_START                1718
+#define IDC_GITBAR_VERSION              1719
+#define IDC_GITCMP_BASE                 1720
+#define IDC_GITCMP_BASEBROWSE           1721
 #define IDC_OPEN_CONTRIBUTORS           1120
 #define IDC_COMPAREMETHODCOMBO          1121
 #define IDC_USE_RECYCLE_BIN             1122
@@ -974,6 +984,8 @@
 #define ID_FILE_OPEN_WITHEDITOR         32945
 #define ID_FILE_OPEN_WITH               32946
 #define ID_FILE_OPEN_PARENT_FOLDER      32947
+#define ID_FILE_COMPARE_GIT             32948
+#define ID_VIEW_GIT_BAR                 32950
 #define ID_STATUS_MERGINGMODE           32960
 #define ID_STATUS_DIFFNUM               32961
 #define ID_STATUS_RIGHTDIR_RO           32962
@@ -2362,9 +2374,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        290
+#define _APS_NEXT_RESOURCE_VALUE        295
 #define _APS_NEXT_COMMAND_VALUE         38931
-#define _APS_NEXT_CONTROL_VALUE         1696
+#define _APS_NEXT_CONTROL_VALUE         1722
 #define _APS_NEXT_SYMED_VALUE           134
 #endif
 #endif

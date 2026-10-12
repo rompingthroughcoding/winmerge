@@ -344,6 +344,7 @@ inline const String OPT_SHOW_SELECT_FILES_AT_STARTUP {_T("Settings/ShowFileDialo
 
 // MDI Tab Bar
 inline const String OPT_TABBAR_ON_TITLEBAR {_T("Settings/TabBarOnTitleBar"s)};
+inline const String OPT_GIT_BASE_FOLDER {_T("Settings/GitBaseFolder"s)};
 inline const String OPT_TABBAR_AUTO_MAXWIDTH {_T("Settings/TabBarAutoMaxWidth"s)};
 
 // MRU

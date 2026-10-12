@@ -18,25 +18,26 @@ static constexpr UINT g_toolbarImageOrder[] =
 	ID_ALL_RIGHT, ID_ALL_LEFT,
 	ID_AUTO_MERGE,
 	ID_FIRSTFILE, ID_PREVFILE, ID_NEXTFILE, ID_LASTFILE,
-	ID_OPTIONS, ID_REFRESH
+	ID_OPTIONS, ID_REFRESH,
+	ID_FILE_COMPARE_GIT
 };
 
 static constexpr int TOOLBAR_IMAGE_COUNT = static_cast<int>(std::size(g_toolbarImageOrder));
 
 static constexpr UINT g_toolbarEmpty[] =
 {
-	ID_FILE_NEW, ID_FILE_OPEN, 0, ID_OPTIONS,
+	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_COMPARE_GIT, 0, ID_OPTIONS,
 };
 
 static constexpr UINT g_toolbarOpenView[] =
 {
-	ID_FILE_NEW, ID_FILE_OPEN, 0,
+	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_COMPARE_GIT, 0,
 	ID_FILE_SAVE, 0, ID_EDIT_UNDO, 0, ID_OPTIONS,
 };
 
 static constexpr UINT g_toolbarFileCmp2[] =
 {
-	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_SAVE, 0,
+	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_COMPARE_GIT, ID_FILE_SAVE, 0,
 	ID_EDIT_UNDO, ID_EDIT_REDO, 0,
 	ID_SELECTLINEDIFF, 0,
 	ID_NEXTDIFF, ID_PREVDIFF, 0,
@@ -48,7 +49,7 @@ static constexpr UINT g_toolbarFileCmp2[] =
 
 static constexpr UINT g_toolbarFileCmp2WithDirDoc[] =
 {
-	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_SAVE, 0,
+	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_COMPARE_GIT, ID_FILE_SAVE, 0,
 	ID_EDIT_UNDO, ID_EDIT_REDO, 0,
 	ID_SELECTLINEDIFF, 0,
 	ID_NEXTDIFF, ID_PREVDIFF, 0,
@@ -61,7 +62,7 @@ static constexpr UINT g_toolbarFileCmp2WithDirDoc[] =
 
 static constexpr UINT g_toolbarFileCmp3[] =
 {
-	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_SAVE, 0,
+	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_COMPARE_GIT, ID_FILE_SAVE, 0,
 	ID_EDIT_UNDO, ID_EDIT_REDO, 0,
 	ID_SELECTLINEDIFF, 0,
 	ID_NEXTDIFF, ID_PREVDIFF, 0,
@@ -75,7 +76,7 @@ static constexpr UINT g_toolbarFileCmp3[] =
 
 static constexpr UINT g_toolbarFileCmp3WithDirDoc[] =
 {
-	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_SAVE, 0,
+	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_COMPARE_GIT, ID_FILE_SAVE, 0,
 	ID_EDIT_UNDO, ID_EDIT_REDO, 0,
 	ID_SELECTLINEDIFF, 0,
 	ID_NEXTDIFF, ID_PREVDIFF, 0,
@@ -157,7 +158,7 @@ static constexpr UINT g_toolbarWebpageCmpWithDirDoc[] =
 
 static constexpr UINT g_toolbarDirCmp[] =
 {
-	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_SAVE, 0,
+	ID_FILE_NEW, ID_FILE_OPEN, ID_FILE_COMPARE_GIT, ID_FILE_SAVE, 0,
 	ID_EDIT_UNDO, 0,
 	ID_NEXTDIFF, ID_PREVDIFF, 0,
 	ID_FIRSTDIFF, ID_CURDIFF, ID_LASTDIFF, 0,

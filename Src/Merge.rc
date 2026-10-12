@@ -350,6 +350,7 @@ BEGIN
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
         MENUITEM "Open Conflic&t File...",      ID_FILE_OPENCONFLICT
         MENUITEM "Open C&lipboard",             ID_FILE_OPENCLIPBOARD
+        MENUITEM "Compare with Git &Version...", ID_FILE_COMPARE_GIT
         MENUITEM SEPARATOR
         MENUITEM "Open Pro&ject...\tCtrl+J",    ID_FILE_OPENPROJECT
         MENUITEM "Sa&ve Project...",            ID_FILE_SAVEPROJECT
@@ -453,6 +454,7 @@ BEGIN
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
         MENUITEM "Open Conflic&t File...",      ID_FILE_OPENCONFLICT
         MENUITEM "Open C&lipboard",             ID_FILE_OPENCLIPBOARD
+        MENUITEM "Compare with Git &Version...", ID_FILE_COMPARE_GIT
         MENUITEM SEPARATOR
         MENUITEM "Open Pro&ject...\tCtrl+J",    ID_FILE_OPENPROJECT
         MENUITEM "Sa&ve Project...",            ID_FILE_SAVEPROJECT
@@ -630,6 +632,7 @@ BEGIN
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
         MENUITEM "Open Conflic&t File...",      ID_FILE_OPENCONFLICT
         MENUITEM "Open C&lipboard",             ID_FILE_OPENCLIPBOARD
+        MENUITEM "Compare with Git &Version...", ID_FILE_COMPARE_GIT
         MENUITEM SEPARATOR
         MENUITEM "Open Pro&ject...\tCtrl+J",    ID_FILE_OPENPROJECT
         MENUITEM "Sa&ve Project...",            ID_FILE_SAVEPROJECT
@@ -784,6 +787,7 @@ BEGIN
         END
         MENUITEM "Men&u Bar",                   ID_VIEW_MENU_BAR
         MENUITEM "Displa&y Filter Bar\tCtrl+Shift+L", ID_VIEW_DISPLAY_FILTER_BAR_MENU
+        MENUITEM "&Git Version Bar",            ID_VIEW_GIT_BAR
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
         MENUITEM "Diff &Pane",                  ID_VIEW_DETAIL_BAR
         MENUITEM "Lo&cation Pane",              ID_VIEW_LOCATION_BAR
@@ -2801,6 +2805,14 @@ BEGIN
     PUSHBUTTON      "&Close",IDCANCEL,192,1,65,12
 END
 
+IDD_GIT_BAR DIALOGEX 0, 0, 400, 16
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, FONTNAME, 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "&Compare with Git",IDC_GITBAR_START,4,1,75,12
+    COMBOBOX        IDC_GITBAR_VERSION,83,1,313,120,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
 IDD_MESSAGE_BOX DIALOGEX 0, 0, 186, 95
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, FONTNAME, 0, 0, 0x1
@@ -2824,6 +2836,24 @@ BEGIN
     CONTROL         "&Difference",IDC_WMGOTO_TODIFF,"Button",BS_AUTORADIOBUTTON,84,48,68,10
     DEFPUSHBUTTON   "&Go to",IDOK,161,41,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,161,58,50,14
+END
+
+IDD_GIT_COMPARE DIALOGEX 0, 0, 330, 98
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Compare with Git Version"
+FONT 8, FONTNAME, 0, 0, 0x1
+BEGIN
+    LTEXT           "Base f&older:",IDC_STATIC,7,9,50,10
+    EDITTEXT        IDC_GITCMP_BASE,58,7,222,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Bro&wse...",IDC_GITCMP_BASEBROWSE,284,7,39,14
+    LTEXT           "&File:",IDC_STATIC,7,29,50,10
+    COMBOBOX        IDC_GITCMP_FILE,58,27,222,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Browse...",IDC_GITCMP_BROWSE,284,27,39,14
+    LTEXT           "&Version:",IDC_STATIC,7,49,50,10
+    COMBOBOX        IDC_GITCMP_VERSION,58,47,265,120,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",IDC_GITCMP_STATUS,58,65,265,10
+    DEFPUSHBUTTON   "&Compare",IDOK,219,78,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,273,78,50,14
 END
 
 IDD_FILTERS_FILEFILTERS DIALOGEX 0, 0, 530, 176
@@ -4487,6 +4517,7 @@ STRINGTABLE
 BEGIN
     ID_FILE_NEW             "\nNew Documents (Ctrl+N)"
     ID_FILE_OPEN            "\nOpen (Ctrl+O)"
+    ID_FILE_COMPARE_GIT     "\nCompare with Git Version"
     ID_FILE_SAVE            "\nSave (Ctrl+S)"
 END
 

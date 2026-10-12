@@ -14,6 +14,7 @@
 #include <vector>
 #include <memory>
 #include <optional>
+#include <map>
 #include "MyReBar.h"
 #include "MenuBar.h"
 #include "MDITabBar.h"
@@ -28,6 +29,7 @@
 #include "DarkModeLib.h"
 #include "WindowsManager.h"
 #include "TempFile.h"
+#include "GitHelper.h"
 #include "FrameType.h"
 
 class BCMenu;
@@ -178,6 +180,10 @@ public:
 	bool DoSelfCompare(UINT nID, const String& file, const String strDesc[] = nullptr,
 		const PackingInfo* infoUnpacker = nullptr, const PrediffingInfo * infoPrediffer = nullptr,
 		const OpenParams* pOpenParams = nullptr);
+	bool DoGitCompare(const String& file, const std::string& rev);
+	bool ExtractGitVersion(const String& file, const std::string& rev, String& tempPath, String& description);
+	bool GetGitVersions(const String& path, std::vector<String>& labels, int& selected);
+	bool PrepareGitVersion(const String& path, int index, String& newPath, String& description);
 	bool ShowAutoMergeDoc(UINT nID, IDirDoc * pDirDoc, int nFiles, const FileLocation fileloc[],
 		const fileopenflags_t dwFlags[], const String strDesc[], const String& sReportFile = _T(""),
 		const PackingInfo * infoUnpacker = nullptr, const PrediffingInfo * infoPrediffer = nullptr,
@@ -392,6 +398,14 @@ protected:
 	std::unique_ptr<BCMenu> m_pWebPageMenu;
 	std::vector<TempFilePtr> m_tempFiles; /**< List of possibly needed temp files. */
 	std::vector<std::shared_ptr<TempFolder>> m_tempFolders; /**< Temp folders for "New Folder" comparisons. */
+
+	struct GitOrigin
+	{
+		String file; /**< Working file the temp file is a version of. */
+		std::string rev; /**< Revision the temp file holds. */
+		std::vector<git::Commit> commits; /**< Commits listed by the last GetGitVersions(). */
+	};
+	std::map<String, GitOrigin> m_gitOrigins; /**< Temp file path -> git origin. */
 	DropHandler *m_pDropHandler;
 	std::unique_ptr<DirWatcher> m_pDirWatcher;
 	std::optional<bool> m_bTabsOnTitleBar;
@@ -449,6 +463,7 @@ protected:
 	afx_msg void OnHelpTranslations();
 	afx_msg void OnFileOpenConflict();
 	afx_msg void OnFileOpenClipboard();
+	afx_msg void OnFileCompareGit();
 	afx_msg void OnPluginsList();
 	afx_msg void OnUpdatePluginName(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateStatusNum(CCmdUI* pCmdUI);

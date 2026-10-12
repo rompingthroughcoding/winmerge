@@ -94,6 +94,8 @@
 #include "PluginMenu.h"
 #include "TableProps.h"
 #include "ToolbarButtons.h"
+#include "GitHelper.h"
+#include "GitCompareDlg.h"
 #include <Poco/Logger.h>
 #include <Poco/AsyncChannel.h>
 #include <Poco/SimpleFileChannel.h>
@@ -298,6 +300,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_FILE_OPENPROJECT, OnFileOpenProject)
 	ON_COMMAND(ID_FILE_SAVEPROJECT, OnSaveProject)
 	ON_COMMAND(ID_FILE_OPENCONFLICT, OnFileOpenConflict)
+	ON_COMMAND(ID_FILE_COMPARE_GIT, OnFileCompareGit)
 	ON_COMMAND(ID_FILE_OPENCLIPBOARD, OnFileOpenClipboard)
 	ON_COMMAND(ID_EDIT_PASTE, OnFileOpenClipboard)
 	ON_COMMAND_RANGE(ID_MRU_FIRST, ID_MRU_LAST, OnMRUs)
@@ -3597,6 +3600,106 @@ bool CMainFrame::DoSelfCompare(UINT nID, const String& file, const String strDes
 		AddToRecentDocs(PathContext(file), (unsigned *)dwFlags, strDesc, _T(""), infoUnpacker, infoPrediffer, nID, pOpenParams, true);
 
 	return result;
+}
+
+/**
+ * @brief Save a version of a file from git to a temp file kept until exit.
+ * @param [out] tempPath Path of the temp file.
+ * @param [out] description Description for the pane showing the temp file.
+ */
+bool CMainFrame::ExtractGitVersion(const String& file, const std::string& rev, String& tempPath, String& description)
+{
+	CWaitCursor wait;
+	auto pTemp = std::make_shared<TempFile>();
+	tempPath = pTemp->Create(_T("git_"), paths::FindExtension(file));
+	String error = tempPath.empty() ? _("Cannot create a temporary file.") : git::SaveFileVersion(file, rev, tempPath);
+	if (!error.empty())
+	{
+		AfxMessageBox(error.c_str(), MB_OK | MB_ICONSTOP);
+		return false;
+	}
+	m_tempFiles.push_back(pTemp);
+	m_gitOrigins[tempPath] = { file, rev, {} };
+
+	String revLabel = ucr::toTString(rev.length() > 8 ? rev.substr(0, 8) : rev);
+	description = strutils::format_string2(_("%1 (Git %2)"), paths::FindFileName(file), revLabel);
+	return true;
+}
+
+/**
+ * @brief Compare a file with its version in a git revision.
+ */
+bool CMainFrame::DoGitCompare(const String& file, const std::string& rev)
+{
+	String tempPath;
+	String strDesc[2];
+	if (!ExtractGitVersion(file, rev, tempPath, strDesc[0]))
+		return false;
+
+	fileopenflags_t dwFlags[2] = { FFILEOPEN_READONLY | FFILEOPEN_NOMRU, FFILEOPEN_NOMRU };
+	PathContext pathContext(tempPath, file);
+	const bool result = DoFileOpen(0, &pathContext, dwFlags, strDesc);
+	if (result)
+	{
+		if (auto* pFrame = dynamic_cast<CMergeEditFrame*>(GetActiveFrame()))
+			pFrame->ShowGitBar();
+	}
+	return result;
+}
+
+/**
+ * @brief Get the versions a git temp file can be switched to.
+ * @param [out] labels Version labels, first is HEAD.
+ * @param [out] selected Index in labels of the version held by the temp file.
+ * @return false if path is not a git version temp file or git failed.
+ */
+bool CMainFrame::GetGitVersions(const String& path, std::vector<String>& labels, int& selected)
+{
+	auto it = m_gitOrigins.find(path);
+	if (it == m_gitOrigins.end())
+		return false;
+	GitOrigin& origin = it->second;
+	if (!git::GetFileHistory(origin.file, origin.commits).empty())
+		return false;
+
+	labels = { _("HEAD (latest commit)") };
+	selected = 0;
+	for (size_t i = 0; i < origin.commits.size(); ++i)
+	{
+		labels.push_back(origin.commits[i].label);
+		if (origin.commits[i].hash == origin.rev)
+			selected = static_cast<int>(i) + 1;
+	}
+	return true;
+}
+
+/**
+ * @brief Create the temp file for a version listed by GetGitVersions().
+ */
+bool CMainFrame::PrepareGitVersion(const String& path, int index, String& newPath, String& description)
+{
+	auto it = m_gitOrigins.find(path);
+	if (it == m_gitOrigins.end() || index < 0 || index > static_cast<int>(it->second.commits.size()))
+		return false;
+	const String file = it->second.file;
+	const std::string rev = (index == 0) ? "HEAD" : it->second.commits[index - 1].hash;
+	return ExtractGitVersion(file, rev, newPath, description);
+}
+
+/**
+ * @brief Called when user selects File/Compare with Git Version
+ */
+void CMainFrame::OnFileCompareGit()
+{
+	CGitCompareDlg dlg;
+	if (IMergeDoc* pMergeDoc = GetActiveIMergeDoc())
+	{
+		const int nFiles = pMergeDoc->GetFileCount();
+		if (nFiles > 0)
+			dlg.m_strFile = pMergeDoc->GetPath(nFiles - 1);
+	}
+	if (dlg.DoModal() == IDOK)
+		DoGitCompare(dlg.m_strFile, dlg.m_strRev);
 }
 
 /**

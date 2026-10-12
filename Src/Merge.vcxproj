@@ -1548,6 +1548,9 @@
     <ClCompile Include="WindowsManagerDialog.cpp" />
     <ClCompile Include="WinRtLoader.cpp" />
     <ClCompile Include="WMGotoDlg.cpp" />
+    <ClCompile Include="GitCompareDlg.cpp" />
+    <ClCompile Include="GitBar.cpp" />
+    <ClCompile Include="GitHelper.cpp" />
     <ClCompile Include="MergeAppCOMClass.cpp">
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
@@ -1804,6 +1807,9 @@
     <ClInclude Include="WinWebDiffLib.h" />
     <ClInclude Include="Win_VersionHelper.h" />
     <ClInclude Include="WMGotoDlg.h" />
+    <ClInclude Include="GitCompareDlg.h" />
+    <ClInclude Include="GitBar.h" />
+    <ClInclude Include="GitHelper.h" />
     <ClInclude Include="MergeAppCOMClass.h" />
     <ClInclude Include="xdiff_gnudiff_compat.h" />
   </ItemGroup>

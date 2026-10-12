@@ -18,6 +18,7 @@
 #include "DiffViewBar.h"
 #include "LocationBar.h"
 #include "LineFilterBar.h"
+#include "GitBar.h"
 #include "MergeFrameCommon.h"
 
 class CMergeDoc;
@@ -45,6 +46,8 @@ public:
 	void ShowFilterBar();
 	void HideFilterBar();
 	CLineFilterBar* GetFilterBar() { return m_pFilterBar.get(); }
+	void ShowGitBar();
+	void HideGitBar();
 
 // Attributes
 protected:
@@ -55,6 +58,7 @@ protected:
 	CMergeStatusBar m_wndStatusBar;
 	CLocationBar m_wndLocationBar;
 	std::unique_ptr<CLineFilterBar> m_pFilterBar;
+	std::unique_ptr<CGitBar> m_pGitBar;
 	class CPreviewNumPageButton : public CButton
 	{
 		virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
@@ -84,6 +88,7 @@ private:
 // Generated message map functions
 private:
 	void UpdateHeaderSizes();
+	void UpdateGitBar();
 	CMergeDoc * m_pMergeDoc;
 
 	//{{AFX_MSG(CMergeEditFrame)
@@ -102,6 +107,10 @@ private:
 	afx_msg void OnUpdateDisplayViewFilterBar(CCmdUI* pCmdUI);
 	afx_msg void OnDisplayFilterBarClose();
 	afx_msg void OnDisplayFilterBarMenu();
+	afx_msg void OnViewGitBar();
+	afx_msg void OnUpdateViewGitBar(CCmdUI* pCmdUI);
+	afx_msg void OnGitBarStart();
+	afx_msg void OnGitBarVersionChanged();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

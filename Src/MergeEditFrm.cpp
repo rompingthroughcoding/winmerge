@@ -13,6 +13,8 @@
 
 #include "stdafx.h"
 #include "MergeEditFrm.h"
+#include "MainFrm.h"
+#include "paths.h"
 #include "FrameWndHelper.h"
 #include "MergeDoc.h"
 #include "MergeEditView.h"
@@ -54,6 +56,10 @@ BEGIN_MESSAGE_MAP(CMergeEditFrame, CMergeFrameCommon)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_DISPLAY_FILTER_BAR_MENU, OnUpdateDisplayViewFilterBar)
 	ON_COMMAND(IDCANCEL, OnDisplayFilterBarClose)
 	ON_COMMAND(IDC_FILTERFILE_MASK_MENU, OnDisplayFilterBarMenu)
+	ON_COMMAND(ID_VIEW_GIT_BAR, OnViewGitBar)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_GIT_BAR, OnUpdateViewGitBar)
+	ON_COMMAND(IDC_GITBAR_START, OnGitBarStart)
+	ON_CBN_SELCHANGE(IDC_GITBAR_VERSION, OnGitBarVersionChanged)
 	// [Window] menu
 	ON_COMMAND(ID_WINDOW_PRESERVE_SPLITTER_RATIOS, OnWindowPreserveSplitterPosition)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_PRESERVE_SPLITTER_RATIOS, OnUpdateWindowPreserveSplitterPosition)
@@ -583,6 +589,85 @@ void CMergeEditFrame::HideFilterBar()
 		m_pFilterBar->DestroyWindow();
 	}
 	m_pFilterBar.reset();
+}
+
+void CMergeEditFrame::OnViewGitBar()
+{
+	if (!m_pGitBar)
+		ShowGitBar();
+	else
+		HideGitBar();
+}
+
+void CMergeEditFrame::OnUpdateViewGitBar(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(TRUE);
+	pCmdUI->SetCheck(m_pGitBar != nullptr);
+}
+
+void CMergeEditFrame::ShowGitBar()
+{
+	if (!m_pGitBar)
+		m_pGitBar.reset(new CGitBar());
+	if (!::IsWindow(m_pGitBar->GetSafeHwnd()) && !m_pGitBar->Create(this))
+	{
+		TRACE0("Failed to create git bar\n");
+		m_pGitBar.reset();
+		return;
+	}
+	UpdateGitBar();
+	ShowControlBar(m_pGitBar.get(), TRUE, FALSE);
+}
+
+void CMergeEditFrame::HideGitBar()
+{
+	if (m_pGitBar != nullptr && ::IsWindow(m_pGitBar->GetSafeHwnd()))
+	{
+		ShowControlBar(m_pGitBar.get(), FALSE, FALSE);
+		m_pGitBar->DestroyWindow();
+	}
+	m_pGitBar.reset();
+}
+
+/// Show the commits of the git version in the left pane, if it is one.
+void CMergeEditFrame::UpdateGitBar()
+{
+	if (!m_pGitBar)
+		return;
+	std::vector<String> labels;
+	int selected = 0;
+	if (!GetMainFrame()->GetGitVersions(m_pMergeDoc->GetPath(0), labels, selected))
+		labels.clear();
+	m_pGitBar->SetVersions(labels, selected);
+}
+
+/// Replace the left pane with the HEAD version of the file in the last pane.
+void CMergeEditFrame::OnGitBarStart()
+{
+	const String file = m_pMergeDoc->GetPath(m_pMergeDoc->m_nBuffers - 1);
+	if (file.empty() || paths::DoesPathExist(file) != paths::IS_EXISTING_FILE)
+	{
+		AfxMessageBox(_("The file does not exist.").c_str(), MB_OK | MB_ICONSTOP);
+		return;
+	}
+	String newPath, description;
+	if (GetMainFrame()->ExtractGitVersion(file, "HEAD", newPath, description) &&
+		m_pMergeDoc->ChangeFile(0, newPath, description))
+	{
+		m_pMergeDoc->m_ptBuf[0]->SetReadOnly(true);
+	}
+	UpdateGitBar();
+}
+
+void CMergeEditFrame::OnGitBarVersionChanged()
+{
+	if (!m_pGitBar)
+		return;
+	const int index = m_pGitBar->GetSelectedVersion();
+	String newPath, description;
+	if (index != CB_ERR && GetMainFrame()->PrepareGitVersion(m_pMergeDoc->GetPath(0), index, newPath, description))
+		m_pMergeDoc->ChangeFile(0, newPath, description);
+	UpdateGitBar();
 }
 
 /**
